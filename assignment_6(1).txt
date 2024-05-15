@@ -1,0 +1,45 @@
+-- 1 ) CREATE A VIEW EMP_SAL_DETAILS TO GET EID NAME DOJ DEPT DESI SALARY  AS BASIC.
+-- ALSO CALCULATE HRA (15% OF BASIC), PF (9% OF BASIC),  NET(BASIC+HRA+PF), GROSS(NET-PF).
+use assignment;
+select *from emp;
+select *from emp_sal;
+drop table emp;
+select E.EID, E.NAME, E.DOJ, Es.DEPT, Es.DESI, Es.SALARY AS BASIC
+from emp E
+inner join emp_sal Es
+on E.EID = Es.EID;
+
+
+create view emp_sal_details as (
+SELECT E.EID, E.NAME, E.DOJ, Es.DEPT, Es.DESI, Es.SALARY AS BASIC, 
+round(salary*15/100, 0) 'HRA', 
+round(salary*9/100, 0) 'pf', 
+round(salary+(salary*15/100)+(salary*9/100), 0) 'NET',  
+round(salary+(salary*15/100)+(salary*9/100) - salary*9/100, 0) 'GROSS'
+FROM emp E
+INNER JOIN emp_sal Es
+ ON E.EID = Es.EID
+);
+
+select *from emp_sal_details;
+
+
+
+-- CREATE A VIEW TO DISPLAY EID,NAME, DOJ, DESI, DEPT OF ALL THE
+-- MANAGERS JOINED IN 2019.
+create view disp_manager as(
+select E.EID, E.NAME, E.DOJ, Es.DESI, Es.DEPT
+from emp E
+inner join emp_sal Es
+on Es.desi = 'manager' 
+    and year(str_to_date(doj, '%d-%m-%Y')) >= 2019
+    and E.EID = Es.EID    
+     );
+
+select *from disp_manager;
+drop view disp_manager;
+
+
+
+-- IN THE INVENTORY STRUCTURE GENERATE A VIEW BILL. IT SHOULD DISPLAY  OID,ODATE,CNAME,ADDRESS,PHONE,PDESC, PRICE, OQTY, AMOUNT
+
